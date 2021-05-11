@@ -1,6 +1,6 @@
-import {getAgencies, saveAgency} from "../controller/AgencyController";
+import {getAgencies, saveAgency, deleteAgency, getAgency} from "../controller/AgencyController";
 
-export const AppRoutes = [
+export const AgencyRoutes = [
     {
         path: "/agencies",
         method: "get",
@@ -11,5 +11,15 @@ export const AppRoutes = [
         path: "/agency",
         method: "post",
         action: saveAgency
+    },
+    {
+        path: "/agency/:id",
+        method: "get",
+        action: getAgency
+    },
+    {
+        path: "/agency",
+        method: "delete",
+        action: deleteAgency
     }
 ];

@@ -1,6 +1,7 @@
 import {Entity, PrimaryGeneratedColumn, Column, Index, ManyToOne} from "typeorm";
 import { User } from "./User";
 import { Agency } from "./Agency";
+import {IsEmail} from "class-validator";
 
 @Entity()
 export class Employee  extends User{
@@ -9,14 +10,18 @@ export class Employee  extends User{
     id: number;
 
     @Column({
-        length:30
+        length:30,
+        nullable:false
     })
     @Index({
         unique:true
     })
+    @IsEmail({}, { message: 'Incorrect email' })
     email:string;
 
-    @Column()
+    @Column({
+        nullable:false
+    })
     password:string;
 
     @Column()

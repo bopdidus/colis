@@ -3,7 +3,8 @@ import {createConnection} from "typeorm";
 import {Request, Response} from "express";
 import * as express from "express";
 import * as bodyParser from "body-parser";
-import {AppRoutes} from "./route/agencyRoute";
+import {AgencyRoutes} from "./route/agencyRoute";
+import {EmployeeRoutes} from "./route/employeeRoute";
 
 createConnection().then(async connection => {
 
@@ -12,8 +13,17 @@ createConnection().then(async connection => {
     const app = express();
     app.use(bodyParser.json());
 
-    // register all application routes
-    AppRoutes.forEach(route => {
+    // register all application routes agency
+    AgencyRoutes.forEach(route => {
+        app[route.method](route.path, (request: Request, response: Response, next: Function) => {
+            route.action(request, response)
+                .then(() => next)
+                .catch(err => next(err));
+        });
+    });
+
+    // register all application routes employee
+    EmployeeRoutes.forEach(route => {
         app[route.method](route.path, (request: Request, response: Response, next: Function) => {
             route.action(request, response)
                 .then(() => next)

@@ -1,5 +1,6 @@
 import {Entity, PrimaryGeneratedColumn, Column, Index} from "typeorm";
 import { Address } from "./Address";
+import {IsNotEmpty,Min, Max} from "class-validator";
 
 @Entity()
 export abstract class User {
@@ -10,23 +11,37 @@ export abstract class User {
     @Column({
         length:20
     })
+    @Min(3)
+    @Max(20)
     firstName: string;
 
     @Column({
-        length:20
+        length:20,
+        nullable:false
     })
+    @Min(3)
+    @Max(20)
+    @IsNotEmpty({ message: 'The lastname is required' })
     lastName: string;
 
-    @Column()
+    @Column({
+        nullable:false
+    })
     @Index({
         unique:true
     })
     cni: number;
    
-    @Column()
+    @Column({
+        nullable:false
+    })
     nationality:string;
 
-    @Column()
+    @Column({
+        nullable:false
+    })
+    @Min(5)
+    @Max(20)
     phoneNumber:number
 
     @Column(type=>Address)

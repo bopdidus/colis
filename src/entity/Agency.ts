@@ -9,7 +9,8 @@ export class Agency {
     id: number;
 
     @Column({
-        length:35
+        length:35,
+        nullable:false
     })
     name:string;
 
