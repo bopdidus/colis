@@ -3,22 +3,47 @@ import {Employee} from "../entity/Employee";
 import {Agency} from "../entity/Agency";
 import {Request, Response} from "express";
 import {validate} from "class-validator";
+const bcrypt = require('bcrypt');
+const saltRounds = 17;
+
 
 export async function saveEmployee (req:Request, res: Response){
     
         const repo = getManager().getRepository(Employee);
-        const employee =  repo.create(req.body);
+        let employee =  new Employee()
+            employee.email= req.body.email;
+            employee.cni= req.body.cni;
+            employee.firstName= req.body.firstName;
+            employee.lastName= req.body.lastName;
+            employee.nationality= req.body.nationality;
+            employee.phoneNumber= req.body.phoneNumber;
+            employee.password= bcrypt.hashSync(req.body.password, saltRounds);
+            employee.isActive=false;
+            employee.address={
+                city: req.body.city,
+                country: req.body.country,
+                quater: req.body.quater}
+           
         const errors = await validate(employee);
 
         if(errors.length > 0){
             return res.status(501).send({"Message": "Occured errors "+errors+" ."})
         }else{
-            const repo = getManager().getRepository(Agency);
-             const agency = await repo.findOne(req.body.agency)
-             employee[0].agency = agency
-            await repo.save(employee)
+            if(req.body.agency != null){
+                const repoAgency = getManager().getRepository(Agency);
+                const agency = await repoAgency.findOne(req.body.agency)
+                employee.agency = agency
+               repo.save(employee).then(employee=>{
+                   res.send(employee)
+               }).catch(err=>{
+                   res.status(500).send(err)
+               })
+            }else{
+                return res.send({"message":"The employee must belong to an agency"})
+            }
+            
 
-            res.send(employee)
+            
         }
         
     }
